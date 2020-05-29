@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('template_title')
-    {{ $user->name }}'s Profile
+    {{ $user->username }}'s Profile
 @endsection
 
 @section('template_fastload_css')
@@ -22,18 +22,18 @@
             <div class="col-12 col-md-10 offset-md-1 col-lg-8 offset-lg-2">
                 <div class="card">
                     <div class="card-header">
-                        {{ trans('profile.showProfileTitle',['username' => $user->name]) }}
+                        {{ trans('profile.showProfileTitle',['username' => $user->username]) }}
                     </div>
                     <div class="card-body">
 
-                        <img src="@if ($user->profile->avatar_status == 1) {{ $user->profile->avatar }} @else {{ Gravatar::get($user->email) }} @endif" alt="{{ $user->name }}" class="user-avatar">
+                        <img src="@if ($user->profile->avatar_status == 1) {{ $user->profile->avatar }} @else {{ Gravatar::get($user->email) }} @endif" alt="{{ $user->username }}" class="user-avatar">
 
                         <dl class="user-info">
                             <dt>
                                 {{ trans('profile.showProfileUsername') }}
                             </dt>
                             <dd>
-                                {{ $user->name }}
+                                {{ $user->username }}
                             </dd>
 
                             <dt>
@@ -49,6 +49,15 @@
                                 </dt>
                                 <dd>
                                     {{ $user->last_name }}
+                                </dd>
+                            @endif
+
+                            @if ($user->domain && ($currentUser->id == $user->id || $currentUser->hasRole('admin')))
+                                <dt>
+                                    {{ trans('profile.showProfileDomain') }}
+                                </dt>
+                                <dd>
+                                    {{ $user->domain }}
                                 </dd>
                             @endif
 
@@ -118,13 +127,13 @@
 
                         @if ($user->profile)
                             @if ($currentUser->id == $user->id)
-                                {!! HTML::icon_link(URL::to('/profile/'.$currentUser->name.'/edit'), 'fa fa-fw fa-cog', trans('titles.editProfile'), array('class' => 'btn btn-small btn-info btn-block')) !!}
+                                {!! HTML::icon_link(URL::to('/profile/'.$currentUser->username.'/edit'), 'fa fa-fw fa-cog', trans('titles.editProfile'), array('class' => 'btn btn-small btn-info btn-block')) !!}
                             @endif
                         @else
                             <p>
                                 {{ trans('profile.noProfileYet') }}
                             </p>
-                            {!! HTML::icon_link(URL::to('/profile/'.$currentUser->name.'/edit'), 'fa fa-fw fa-plus ', trans('titles.createProfile'), array('class' => 'btn btn-small btn-info btn-block')) !!}
+                            {!! HTML::icon_link(URL::to('/profile/'.$currentUser->username.'/edit'), 'fa fa-fw fa-plus ', trans('titles.createProfile'), array('class' => 'btn btn-small btn-info btn-block')) !!}
                         @endif
                     </div>
                 </div>

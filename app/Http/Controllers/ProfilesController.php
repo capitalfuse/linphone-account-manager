@@ -7,12 +7,13 @@ use App\Http\Requests\UpdateUserPasswordRequest;
 use App\Http\Requests\UpdateUserProfile;
 use App\Models\Profile;
 use App\Models\Theme;
-use App\Models\User;
+use App\Models\Account;
 use App\Notifications\SendGoodbyeEmail;
 use App\Traits\CaptureIpTrait;
 use File;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
+use Auth;
 use Illuminate\Support\Facades\Session;
 use Image;
 use jeremykenedy\Uuid\Uuid;
@@ -44,7 +45,7 @@ class ProfilesController extends Controller
      */
     public function getUserByUsername($username)
     {
-        return User::with('profile')->wherename($username)->firstOrFail();
+        return Account::with('profile')->where('username', $username)->firstOrFail();
     }
 
     /**
@@ -134,7 +135,7 @@ class ProfilesController extends Controller
         $user->updated_ip_address = $ipAddress->getClientIp();
         $user->save();
 
-        return redirect('profile/'.$user->name.'/edit')->with('success', trans('profile.updateSuccess'));
+        return redirect('profile/'.$user->username.'/edit')->with('success', trans('profile.updateSuccess'));
     }
 
     /**
@@ -147,24 +148,33 @@ class ProfilesController extends Controller
      */
     public function updateUserAccount(Request $request, $id)
     {
-        $currentUser = \Auth::user();
-        $user = User::findOrFail($id);
+        $currentUser = Auth::user();
+        $user = Account::findOrFail($id);
         $emailCheck = ($request->input('email') !== '') && ($request->input('email') !== $user->email);
         $ipAddress = new CaptureIpTrait();
         $rules = [];
 
-        if ($user->name !== $request->input('name')) {
+        if ($user->username !== $request->input('username')) {
             $usernameRules = [
-                'name' => 'required|max:255|unique:users',
+                'username' => 'required|max:255|unique:accounts',
             ];
         } else {
             $usernameRules = [
-                'name' => 'required|max:255',
+                'username' => 'required|max:255',
+            ];
+        }
+        if ($user->domain !== $request->input('domain')) {
+            $domainRules = [
+                'domain' => 'required|max:64',
+            ];
+        } else {
+            $domainRules = [
+                'domain' => 'required|max:64',
             ];
         }
         if ($emailCheck) {
             $emailRules = [
-                'email' => 'email|max:255|unique:users',
+                'email' => 'email|max:255|unique:accounts',
             ];
         } else {
             $emailRules = [
@@ -176,14 +186,15 @@ class ProfilesController extends Controller
             'last_name'  => 'nullable|string|max:255',
         ];
 
-        $rules = array_merge($usernameRules, $emailRules, $additionalRules);
+        $rules = array_merge($usernameRules, $domainRules, $emailRules, $additionalRules);
         $validator = Validator::make($request->all(), $rules);
 
         if ($validator->fails()) {
             return back()->withErrors($validator)->withInput();
         }
 
-        $user->name = $request->input('name');
+        $user->username = $request->input('username');
+        $user->domain = $request->input('domain');
         $user->first_name = $request->input('first_name');
         $user->last_name = $request->input('last_name');
 
@@ -195,7 +206,7 @@ class ProfilesController extends Controller
 
         $user->save();
 
-        return redirect('profile/'.$user->name.'/edit')->with('success', trans('profile.updateAccountSuccess'));
+        return redirect('profile/'.$user->username.'/edit')->with('success', trans('profile.updateAccountSuccess'));
     }
 
     /**
@@ -208,18 +219,20 @@ class ProfilesController extends Controller
      */
     public function updateUserPassword(UpdateUserPasswordRequest $request, $id)
     {
-        $currentUser = \Auth::user();
-        $user = User::findOrFail($id);
+        $currentUser = Auth::user();
+        $user = Account::findOrFail($id); // User Instance:$user
+        $password = $user->password; // Password Instance of $user
         $ipAddress = new CaptureIpTrait();
 
         if ($request->input('password') !== null) {
-            $user->password = bcrypt($request->input('password'));
+            $password->password = hash('sha256', $user->username.':'.$user->domain.':'.$request->input('password'));
         }
 
         $user->updated_ip_address = $ipAddress->getClientIp();
+        $user->password()->save($password); // Save Password Instance of $user
         $user->save();
 
-        return redirect('profile/'.$user->name.'/edit')->with('success', trans('profile.updatePWSuccess'));
+        return redirect('profile/'.$user->username.'/edit')->with('success', trans('profile.updatePWSuccess'));
     }
 
     /**
@@ -232,7 +245,7 @@ class ProfilesController extends Controller
     public function upload(Request $request)
     {
         if ($request->hasFile('file')) {
-            $currentUser = \Auth::user();
+            $currentUser = Auth::user();
             $avatar = $request->file('file');
             $filename = 'avatar.'.$avatar->getClientOriginalExtension();
             $save_path = storage_path().'/users/id/'.$currentUser->id.'/uploads/images/avatar/';
@@ -278,12 +291,12 @@ class ProfilesController extends Controller
      */
     public function deleteUserAccount(DeleteUserAccount $request, $id)
     {
-        $currentUser = \Auth::user();
-        $user = User::findOrFail($id);
+        $currentUser = Auth::user();
+        $user = Account::findOrFail($id);
         $ipAddress = new CaptureIpTrait();
 
         if ($user->id !== $currentUser->id) {
-            return redirect('profile/'.$user->name.'/edit')->with('error', trans('profile.errorDeleteNotYour'));
+            return redirect('profile/'.$user->username.'/edit')->with('error', trans('profile.errorDeleteNotYour'));
         }
 
         // Create and encrypt user account restore token
@@ -323,7 +336,7 @@ class ProfilesController extends Controller
      *
      * @return void
      */
-    public static function sendGoodbyEmail(User $user, $token)
+    public static function sendGoodbyEmail(Account $user, $token)
     {
         $user->notify(new SendGoodbyeEmail($token));
     }

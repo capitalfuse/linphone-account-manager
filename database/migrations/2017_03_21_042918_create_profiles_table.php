@@ -16,7 +16,7 @@ class CreateProfilesTable extends Migration
         Schema::create('profiles', function (Blueprint $table) {
             //Structure
             $table->increments('id');
-            $table->unsignedBigInteger('user_id')->unsigned()->index();
+            $table->unsignedBigInteger('account_id')->unsigned()->index();
             $table->unsignedBigInteger('theme_id')->unsigned()->default(1);
             $table->string('location')->nullable();
             $table->text('bio')->nullable();
@@ -27,7 +27,7 @@ class CreateProfilesTable extends Migration
             $table->timestamps();
 
             //Relationships
-            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+            $table->foreign('account_id')->references('id')->on('accounts')->onDelete('cascade');
             $table->foreign('theme_id')->references('id')->on('themes');
         });
     }

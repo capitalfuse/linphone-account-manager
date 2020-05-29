@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\User;
+use App\Models\Account;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 
@@ -57,6 +57,6 @@ class RestoreUserController extends ProfilesController
 
         $user->restore();
 
-        return redirect('/login')->with('success', trans('profile.successUserRestore', ['username' => $user->name]));
+        return redirect('/login')->with('success', trans('profile.successUserRestore', ['username' => $user->username]));
     }
 }

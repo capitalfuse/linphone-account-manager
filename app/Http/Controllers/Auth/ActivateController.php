@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use App\Models\Activation;
 use App\Models\Profile;
-use App\Models\User;
+use App\Models\Account;
 use App\Traits\ActivationTrait;
 use App\Traits\CaptureIpTrait;
 use Auth;
@@ -113,7 +113,7 @@ class ActivateController extends Controller
     public function initial()
     {
         $user = Auth::user();
-        $lastActivation = Activation::where('user_id', $user->id)->get()->last();
+        $lastActivation = Activation::where('account_id', $user->id)->get()->last();
         $currentRoute = Route::currentRouteName();
 
         $rCheck = $this->activeRedirect($user, $currentRoute);
@@ -137,7 +137,7 @@ class ActivateController extends Controller
     public function activationRequired()
     {
         $user = Auth::user();
-        $lastActivation = Activation::where('user_id', $user->id)->get()->last();
+        $lastActivation = Activation::where('account_id', $user->id)->get()->last();
         $currentRoute = Route::currentRouteName();
 
         $rCheck = $this->activeRedirect($user, $currentRoute);
@@ -146,7 +146,7 @@ class ActivateController extends Controller
         }
 
         if ($user->activated === false) {
-            $activationsCount = Activation::where('user_id', $user->id)
+            $activationsCount = Activation::where('account_id', $user->id)
                 ->where('created_at', '>=', Carbon::now()->subHours(config('settings.timePeriod')))
                 ->count();
 
@@ -193,7 +193,7 @@ class ActivateController extends Controller
         }
 
         $activation = Activation::where('token', $token)->get()
-            ->where('user_id', $user->id)
+            ->where('account_id', $user->id)
             ->first();
 
         if (empty($activation)) {
@@ -211,7 +211,7 @@ class ActivateController extends Controller
         $user->profile()->save($profile);
         $user->save();
 
-        $allActivations = Activation::where('user_id', $user->id)->get();
+        $allActivations = Activation::where('account_id', $user->id)->get();
         foreach ($allActivations as $anActivation) {
             $anActivation->delete();
         }
@@ -237,11 +237,11 @@ class ActivateController extends Controller
     public function resend()
     {
         $user = Auth::user();
-        $lastActivation = Activation::where('user_id', $user->id)->get()->last();
+        $lastActivation = Activation::where('account_id', $user->id)->get()->last();
         $currentRoute = Route::currentRouteName();
 
         if ($user->activated === false) {
-            $activationsCount = Activation::where('user_id', $user->id)
+            $activationsCount = Activation::where('account_id', $user->id)
                 ->where('created_at', '>=', Carbon::now()->subHours(config('settings.timePeriod')))
                 ->count();
 
@@ -282,8 +282,8 @@ class ActivateController extends Controller
         $user = Auth::user();
         $currentRoute = Route::currentRouteName();
         $timePeriod = config('settings.timePeriod');
-        $lastActivation = Activation::where('user_id', $user->id)->get()->last();
-        $activationsCount = Activation::where('user_id', $user->id)
+        $lastActivation = Activation::where('account_id', $user->id)->get()->last();
+        $activationsCount = Activation::where('account_id', $user->id)
             ->where('created_at', '>=', Carbon::now()->subHours($timePeriod))
             ->count();
 

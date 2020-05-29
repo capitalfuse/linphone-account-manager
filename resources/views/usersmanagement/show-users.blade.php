@@ -89,10 +89,11 @@
                                     @foreach($users as $user)
                                         <tr>
                                             <td>{{$user->id}}</td>
-                                            <td>{{$user->name}}</td>
+                                            <td>{{$user->username}}</td>
                                             <td class="hidden-xs"><a href="mailto:{{ $user->email }}" title="email {{ $user->email }}">{{ $user->email }}</a></td>
                                             <td class="hidden-xs">{{$user->first_name}}</td>
                                             <td class="hidden-xs">{{$user->last_name}}</td>
+                                            <td class="hidden-xs">{{$user->domain}}</td>
                                             <td>
                                                 @foreach ($user->roles as $user_role)
                                                     @if ($user_role->name == 'User')

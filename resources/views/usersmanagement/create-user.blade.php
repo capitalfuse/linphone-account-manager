@@ -49,20 +49,20 @@
                                 </div>
                             </div>
 
-                            <div class="form-group has-feedback row {{ $errors->has('name') ? ' has-error ' : '' }}">
-                                {!! Form::label('name', trans('forms.create_user_label_username'), array('class' => 'col-md-3 control-label')); !!}
+                            <div class="form-group has-feedback row {{ $errors->has('username') ? ' has-error ' : '' }}">
+                                {!! Form::label('username', trans('forms.create_user_label_username'), array('class' => 'col-md-3 control-label')); !!}
                                 <div class="col-md-9">
                                     <div class="input-group">
-                                        {!! Form::text('name', NULL, array('id' => 'name', 'class' => 'form-control', 'placeholder' => trans('forms.create_user_ph_username'))) !!}
+                                        {!! Form::text('username', NULL, array('id' => 'username', 'class' => 'form-control', 'placeholder' => trans('forms.create_user_ph_username'))) !!}
                                         <div class="input-group-append">
-                                            <label class="input-group-text" for="name">
+                                            <label class="input-group-text" for="username">
                                                 <i class="fa fa-fw {{ trans('forms.create_user_icon_username') }}" aria-hidden="true"></i>
                                             </label>
                                         </div>
                                     </div>
-                                    @if ($errors->has('name'))
+                                    @if ($errors->has('username'))
                                         <span class="help-block">
-                                            <strong>{{ $errors->first('name') }}</strong>
+                                            <strong>{{ $errors->first('username') }}</strong>
                                         </span>
                                     @endif
                                 </div>
@@ -101,6 +101,25 @@
                                     @if ($errors->has('last_name'))
                                         <span class="help-block">
                                             <strong>{{ $errors->first('last_name') }}</strong>
+                                        </span>
+                                    @endif
+                                </div>
+                            </div>
+
+                            <div class="form-group has-feedback row {{ $errors->has('domain') ? ' has-error ' : '' }}">
+                                {!! Form::label('domain', trans('forms.create_user_label_domain'), array('class' => 'col-md-3 control-label')); !!}
+                                <div class="col-md-9">
+                                    <div class="input-group">
+                                        {!! Form::text('domain', NULL, array('id' => 'domain', 'class' => 'form-control', 'placeholder' => trans('forms.create_user_ph_domain'))) !!}
+                                        <div class="input-group-append">
+                                            <label class="input-group-text" for="domain">
+                                                <i class="fa fa-fw {{ trans('forms.create_user_icon_domain') }}" aria-hidden="true"></i>
+                                            </label>
+                                        </div>
+                                    </div>
+                                    @if ($errors->has('domain'))
+                                        <span class="help-block">
+                                            <strong>{{ $errors->first('domain') }}</strong>
                                         </span>
                                     @endif
                                 </div>

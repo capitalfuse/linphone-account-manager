@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\User;
+use App\Models\Account;
 use Illuminate\Support\Facades\Route;
 
 class AdminDetailsController extends Controller
@@ -39,7 +39,7 @@ class AdminDetailsController extends Controller
      */
     public function activeUsers()
     {
-        $users = User::count();
+        $users = Account::count();
 
         return view('pages.admin.active-users', ['users' => $users]);
     }

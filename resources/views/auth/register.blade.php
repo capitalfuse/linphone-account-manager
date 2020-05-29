@@ -15,11 +15,11 @@
                             <label for="name" class="col-md-4 col-form-label text-md-right">{{ __('Username') }}</label>
 
                             <div class="col-md-6">
-                                <input id="name" type="text" class="form-control{{ $errors->has('name') ? ' is-invalid' : '' }}" name="name" value="{{ old('name') }}" required autofocus>
+                                <input id="username" type="text" class="form-control{{ $errors->has('username') ? ' is-invalid' : '' }}" name="username" value="{{ old('username') }}" required autofocus>
 
-                                @if ($errors->has('name'))
+                                @if ($errors->has('username'))
                                     <span class="invalid-feedback">
-                                        <strong>{{ $errors->first('name') }}</strong>
+                                        <strong>{{ $errors->first('username') }}</strong>
                                     </span>
                                 @endif
                             </div>
@@ -48,6 +48,20 @@
                                 @if ($errors->has('last_name'))
                                     <span class="invalid-feedback">
                                         <strong>{{ $errors->first('last_name') }}</strong>
+                                    </span>
+                                @endif
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label for="domain" class="col-md-4 col-form-label text-md-right">{{ __('SIP Domain') }}</label>
+
+                            <div class="col-md-6">
+                                <input id="domain" type="text" class="form-control{{ $errors->has('domain') ? ' is-invalid' : '' }}" name="domain" value="{{ old('domain') }}" required autofocus>
+
+                                @if ($errors->has('domain'))
+                                    <span class="invalid-feedback">
+                                        <strong>{{ $errors->first('domain') }}</strong>
                                     </span>
                                 @endif
                             </div>
@@ -106,14 +120,14 @@
                             </div>
                         </div>
 
-                        <div class="row">
+                        <!-- <div class="row">
                             <div class="col-12 col-lg-10 offset-lg-1 col-xl-8 offset-xl-2">
                                 <p class="text-center mb-4">
                                     Or Use Social Logins to Register
                                 </p>
-                                @include('partials.socials')
+                                {{--@include('partials.socials')--}}
                             </div>
-                        </div>
+                        </div> -->
 
                     </form>
                 </div>
@@ -123,8 +137,8 @@
 </div>
 @endsection
 
-@section('footer_scripts')
+{{-- @section('footer_scripts')
     @if(config('settings.reCaptchStatus'))
         <script src='https://www.google.com/recaptcha/api.js'></script>
     @endif
-@endsection
+@endsection --}}

@@ -16,13 +16,13 @@ class CreateSocialLoginsTable extends Migration
         Schema::create('social_logins', function (Blueprint $table) {
             // Structure
             $table->bigIncrements('id');
-            $table->unsignedBigInteger('user_id')->unsigned()->index();
+            $table->unsignedBigInteger('account_id')->unsigned()->index();
             $table->string('provider', 100);
             $table->text('social_id');
             $table->timestamps();
 
             // Relationships
-            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+            $table->foreign('account_id')->references('id')->on('accounts')->onDelete('cascade');
         });
     }
 

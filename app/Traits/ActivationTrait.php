@@ -3,7 +3,7 @@
 namespace App\Traits;
 
 use App\Logic\Activation\ActivationRepository;
-use App\Models\User;
+use App\Models\Account;
 use Illuminate\Support\Facades\Validator;
 
 trait ActivationTrait
@@ -12,11 +12,11 @@ trait ActivationTrait
      * Trigger Activation Email
      * Note: this was build pre laravel verification emails.
      *
-     * @param  User $user
+     * @param  Account $user
      *
      * @return void
      */
-    public function initiateEmailActivation(User $user)
+    public function initiateEmailActivation(Account $user)
     {
         if (! config('settings.activation') || ! $this->validateEmail($user)) {
             return true;
@@ -27,13 +27,13 @@ trait ActivationTrait
     }
 
     /**
-     * Validate the Users Email.
+     * Validate the Accounts Email.
      *
-     * @param  User $user
+     * @param  Account $user
      *
      * @return bool
      */
-    protected function validateEmail(User $user)
+    protected function validateEmail(Account $user)
     {
         $validator = Validator::make(['email' => $user->email], ['email' => 'required|email']);
 

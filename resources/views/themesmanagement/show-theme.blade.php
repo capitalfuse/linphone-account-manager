@@ -92,7 +92,7 @@
 
                         <ul class="list-group">
                             @foreach ($themeUsers as $themeUser)
-                                <li class="list-group-item"><i class="fa fa-user fa-fw margin-right-1" aria-hidden="true"></i> {{ $themeUser->name }}</li>
+                                <li class="list-group-item"><i class="fa fa-user fa-fw margin-right-1" aria-hidden="true"></i> {{ $themeUser->username }}</li>
                             @endforeach
                         </ul>
                     @endif

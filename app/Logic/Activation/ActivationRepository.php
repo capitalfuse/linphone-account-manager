@@ -3,7 +3,7 @@
 namespace App\Logic\Activation;
 
 use App\Models\Activation;
-use App\Models\User;
+use App\Models\Account;
 use App\Notifications\SendActivationEmail;
 use App\Traits\CaptureIpTrait;
 use Carbon\Carbon;
@@ -13,13 +13,13 @@ class ActivationRepository
     /**
      * Creates a token and send email.
      *
-     * @param \App\Models\User $user
+     * @param \App\Models\Account $user
      *
      * @return bool or void
      */
-    public function createTokenAndSendEmail(User $user)
+    public function createTokenAndSendEmail(Account $user)
     {
-        $activations = Activation::where('user_id', $user->id)
+        $activations = Activation::where('account_id', $user->id)
             ->where('created_at', '>=', Carbon::now()->subHours(config('settings.timePeriod')))
             ->count();
 
@@ -44,15 +44,15 @@ class ActivationRepository
     /**
      * Creates a new activation token.
      *
-     * @param \App\Models\User $user
+     * @param \App\Models\Account $user
      *
      * @return \App\Models\Activation $activation
      */
-    public function createNewActivationToken(User $user)
+    public function createNewActivationToken(Account $user)
     {
         $ipAddress = new CaptureIpTrait();
         $activation = new Activation();
-        $activation->user_id = $user->id;
+        $activation->account_id = $user->id;
         $activation->token = str_random(64);
         $activation->ip_address = $ipAddress->getClientIp();
         $activation->save();
@@ -63,10 +63,10 @@ class ActivationRepository
     /**
      * Sends a new activation email.
      *
-     * @param \App\Models\User $user  The user
+     * @param \App\Models\Account $user  The user
      * @param string           $token The token
      */
-    public function sendNewActivationEmail(User $user, $token)
+    public function sendNewActivationEmail(Account $user, $token)
     {
         $user->notify(new SendActivationEmail($token));
     }

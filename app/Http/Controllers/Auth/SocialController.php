@@ -5,13 +5,14 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use App\Models\Profile;
 use App\Models\Social;
-use App\Models\User;
+use App\Models\Account;
 use App\Traits\ActivationTrait;
 use App\Traits\CaptureIpTrait;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Config;
 use jeremykenedy\LaravelRoles\Models\Role;
 use Laravel\Socialite\Facades\Socialite;
+use Faker\Factory;
 
 class SocialController extends Controller
 {
@@ -61,7 +62,7 @@ class SocialController extends Controller
         $socialUserObject = Socialite::driver($provider)->user();
 
         // Check if email is already registered
-        $userCheck = User::where('email', '=', $socialUserObject->email)->first();
+        $userCheck = Account::where('email', '=', $socialUserObject->email)->first();
 
         $email = $socialUserObject->email;
 
@@ -94,18 +95,27 @@ class SocialController extends Controller
 
                 // Check to make sure username does not already exist in DB before recording
                 $username = $this->checkUserName($username, $email);
+                $faker = Factory::create();
 
-                $user = User::create([
-                    'name'                 => $username,
+                $user = Account::create([
+                    'username'             => $username,
                     'first_name'           => $fullname[0],
                     'last_name'            => $fullname[1],
+                    'domain'               => $faker->domainName,
                     'email'                => $email,
-                    'password'             => bcrypt(str_random(40)),
                     'token'                => str_random(64),
                     'activated'            => true,
                     'signup_sm_ip_address' => $ipAddress->getClientIp(),
 
                 ]);
+
+                $password = Password::create ([
+                    'account_id'       => $user->id,
+                    'password'         => hash('sha256', $user->username.':'.$user->domain.':password'),
+                    'algorithm'        => 'SHA-256',
+                ]);
+    
+                $user->password()->save($password);
 
                 $socialData->social_id = $socialUserObject->id;
                 $socialData->provider = $provider;
@@ -157,13 +167,13 @@ class SocialController extends Controller
      */
     public function checkUserName($username, $email)
     {
-        $userNameCheck = User::where('name', '=', $username)->first();
+        $userNameCheck = Account::where('name', '=', $username)->first();
 
         if ($userNameCheck) {
             $i = 1;
             do {
                 $username = $this->generateUserName($username);
-                $newCheck = User::where('name', '=', $username)->first();
+                $newCheck = Account::where('name', '=', $username)->first();
 
                 if ($newCheck == null) {
                     $newCheck = 0;

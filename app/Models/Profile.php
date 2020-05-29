@@ -47,9 +47,9 @@ class Profile extends Model
      *
      * @return mixed
      */
-    public function user()
+    public function account()
     {
-        return $this->belongsTo('App\Models\User');
+        return $this->belongsTo('App\Models\Account');
     }
 
     /**

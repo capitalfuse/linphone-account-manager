@@ -9,7 +9,7 @@
                 @if($users)
                     @foreach($users as $aUser)
                         <option value="{{ $aUser->id }}" data-email="{{ $aUser->email }}" @isset($item->userId) {{ $item->userId == $aUser->id ? 'selected="selected"' : '' }} @endisset >
-                            {{ $aUser->name }}
+                            {{ $aUser->username }}
                         </option>
                     @endforeach
                 @endif

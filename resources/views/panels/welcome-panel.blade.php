@@ -12,7 +12,7 @@
 <div class="card">
     <div class="card-header @role('admin', true) bg-secondary text-white @endrole">
 
-        Welcome {{ Auth::user()->name }}
+        Welcome {{ Auth::user()->username }}
 
         @role('admin', true)
             <span class="pull-right badge badge-primary" style="margin-top:4px">
@@ -30,18 +30,16 @@
             {{ trans('auth.loggedIn') }}
         </h2>
         <p>
-            <em>Thank you</em> for checking this project out. <strong>Please remember to star it!</strong>
+            Please confirm your current profile;<br>
+            Select <code>"Profile"</code> by clicking the upper right pull down menu.<br>
+            If you need, you can modify and edit the following issues.<br>
         </p>
         <p>
-            <iframe src="https://ghbtns.com/github-btn.html?user=jeremykenedy&repo=laravel-auth&type=star&count=true" frameborder="0" scrolling="0" width="170px" height="20px" style="margin: 0px 0 -3px .5em;"></iframe>
-        </p>
-        <p>
-            This page route is protected by <code>activated</code> middleware. Only accounts with activated emails are able pass this middleware.
-        </p>
-        <p>
-            <small>
-                Users registered via Social providers are by default activated.
-            </small>
+            <ul>
+                <li>Profile Settings</li>
+                <li>Account Settings</li>
+                <li>Administration</li>
+            </ul>
         </p>
 
         <hr>

@@ -3,7 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Profile;
-use App\Models\User;
+use App\Models\Account;
+use App\Models\Password;
 use App\Traits\CaptureIpTrait;
 use Auth;
 use Illuminate\Http\Request;
@@ -32,9 +33,9 @@ class UsersManagementController extends Controller
     {
         $paginationEnabled = config('usersmanagement.enablePagination');
         if ($paginationEnabled) {
-            $users = User::paginate(config('usersmanagement.paginateListSize'));
+            $users = Account::paginate(config('usersmanagement.paginateListSize'));
         } else {
-            $users = User::all();
+            $users = Account::all();
         }
         $roles = Role::all();
 
@@ -65,19 +66,21 @@ class UsersManagementController extends Controller
         $validator = Validator::make(
             $request->all(),
             [
-                'name'                  => 'required|max:255|unique:users',
+                'username'              => 'required|max:255|unique:accounts',
                 'first_name'            => '',
                 'last_name'             => '',
-                'email'                 => 'required|email|max:255|unique:users',
+                'domain'                => 'required|max:64',
+                'email'                 => 'required|email|max:255|unique:accounts',
                 'password'              => 'required|min:6|max:20|confirmed',
                 'password_confirmation' => 'required|same:password',
                 'role'                  => 'required',
             ],
             [
-                'name.unique'         => trans('auth.userNameTaken'),
-                'name.required'       => trans('auth.userNameRequired'),
+                'username.unique'         => trans('auth.userNameTaken'),
+                'username.required'       => trans('auth.userNameRequired'),
                 'first_name.required' => trans('auth.fNameRequired'),
                 'last_name.required'  => trans('auth.lNameRequired'),
+                'domain.required'     => trans('auth.domainRequired'),
                 'email.required'      => trans('auth.emailRequired'),
                 'email.email'         => trans('auth.emailInvalid'),
                 'password.required'   => trans('auth.passwordRequired'),
@@ -94,17 +97,24 @@ class UsersManagementController extends Controller
         $ipAddress = new CaptureIpTrait();
         $profile = new Profile();
 
-        $user = User::create([
-            'name'             => $request->input('name'),
+        $user = Account::create([
+            'username'         => $request->input('username'),
             'first_name'       => $request->input('first_name'),
             'last_name'        => $request->input('last_name'),
+            'domain'           => $request->input('domain'),
             'email'            => $request->input('email'),
-            'password'         => bcrypt($request->input('password')),
             'token'            => str_random(64),
             'admin_ip_address' => $ipAddress->getClientIp(),
             'activated'        => 1,
         ]);
 
+        $password = Password::create ([
+            'account_id'       => $user->id,
+            'password'         => hash('sha256', $user->username.':'.$user->domain.':'.$request->input('password')),
+            'algorithm'        => 'SHA-256',
+        ]);
+
+        $user->password()->save($password);
         $user->profile()->save($profile);
         $user->attachRole($request->input('role'));
         $user->save();
@@ -115,11 +125,11 @@ class UsersManagementController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param User $user
+     * @param Account $user
      *
      * @return \Illuminate\Http\Response
      */
-    public function show(User $user)
+    public function show(Account $user)
     {
         return view('usersmanagement.show-user', compact('user'));
     }
@@ -127,11 +137,11 @@ class UsersManagementController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param User $user
+     * @param Account $user
      *
      * @return \Illuminate\Http\Response
      */
-    public function edit(User $user)
+    public function edit(Account $user)
     {
         $roles = Role::all();
 
@@ -152,24 +162,24 @@ class UsersManagementController extends Controller
      * Update the specified resource in storage.
      *
      * @param \Illuminate\Http\Request $request
-     * @param User                     $user
+     * @param Account                     $user
      *
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, User $user)
+    public function update(Request $request, Account $user)
     {
         $emailCheck = ($request->input('email') !== '') && ($request->input('email') !== $user->email);
         $ipAddress = new CaptureIpTrait();
 
         if ($emailCheck) {
             $validator = Validator::make($request->all(), [
-                'name'     => 'required|max:255|unique:users',
-                'email'    => 'email|max:255|unique:users',
+                'username'     => 'required|max:255|unique:accounts',
+                'email'    => 'email|max:255|unique:accounts',
                 'password' => 'present|confirmed|min:6',
             ]);
         } else {
             $validator = Validator::make($request->all(), [
-                'name'     => 'required|max:255|unique:users,name,'.$user->id,
+                'username'     => 'required|max:255|unique:accounts,username,'.$user->id,
                 'password' => 'nullable|confirmed|min:6',
             ]);
         }
@@ -178,7 +188,8 @@ class UsersManagementController extends Controller
             return back()->withErrors($validator)->withInput();
         }
 
-        $user->name = $request->input('name');
+        $user->username = $request->input('username');
+        $user->domain = $request->input('domain');
         $user->first_name = $request->input('first_name');
         $user->last_name = $request->input('last_name');
 
@@ -187,7 +198,7 @@ class UsersManagementController extends Controller
         }
 
         if ($request->input('password') !== null) {
-            $user->password = bcrypt($request->input('password'));
+            $user->password = hash('sha256', $user->username.':'.$user->domain.':'.$request->input('password'));
         }
 
         $userRole = $request->input('role');
@@ -216,11 +227,11 @@ class UsersManagementController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param User $user
+     * @param Account $user
      *
      * @return \Illuminate\Http\Response
      */
-    public function destroy(User $user)
+    public function destroy(Account $user)
     {
         $currentUser = Auth::user();
         $ipAddress = new CaptureIpTrait();
@@ -263,8 +274,8 @@ class UsersManagementController extends Controller
             ], Response::HTTP_UNPROCESSABLE_ENTITY);
         }
 
-        $results = User::where('id', 'like', $searchTerm.'%')
-                            ->orWhere('name', 'like', $searchTerm.'%')
+        $results = Account::where('id', 'like', $searchTerm.'%')
+                            ->orWhere('username', 'like', $searchTerm.'%')
                             ->orWhere('email', 'like', $searchTerm.'%')->get();
 
         // Attach roles to results

@@ -23,7 +23,7 @@ class CreateTwoStepAuthTable extends Migration
             Schema::connection($connection)->create($table, function (Blueprint $table) {
                 $table->increments('id');
                 $table->unsignedBigInteger('userId')->unsigned()->index();
-                $table->foreign('userId')->references('id')->on('users')->onDelete('cascade');
+                $table->foreign('userId')->references('id')->on('accounts')->onDelete('cascade');
                 $table->string('authCode')->nullable();
                 $table->integer('authCount');
                 $table->boolean('authStatus')->default(false);

@@ -52,7 +52,7 @@ class Social extends Model
      * @var array
      */
     protected $fillable = [
-        'user_id',
+        'account_id',
         'provider',
         'social_id',
     ];
@@ -64,7 +64,7 @@ class Social extends Model
      */
     protected $casts = [
         'id'        => 'integer',
-        'user_id'   => 'integer',
+        'account_id'   => 'integer',
         'provider'  => 'string',
         'social_id' => 'string',
     ];
@@ -74,6 +74,6 @@ class Social extends Model
      */
     public function user()
     {
-        return $this->belongsTo('App\Models\User');
+        return $this->belongsTo('App\Models\Account');
     }
 }

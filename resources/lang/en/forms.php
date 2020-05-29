@@ -28,6 +28,10 @@ return [
     'create_user_ph_lastname'    => 'Last Name',
     'create_user_icon_lastname'  => 'fa-user',
 
+    'create_user_label_domain' => 'SIP Domain',
+    'create_user_ph_domain'    => 'SIP Domain',
+    'create_user_icon_domain'  => 'fa-server',
+
     'create_user_label_password' => 'Password',
     'create_user_ph_password'    => 'Password',
     'create_user_icon_password'  => 'fa-lock',

@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\User;
+use App\Models\Account;
 use Illuminate\Http\Request;
 use jeremykenedy\LaravelRoles\Models\Role;
 
@@ -27,7 +27,7 @@ class SoftDeletesController extends Controller
      */
     public static function getDeletedUser($id)
     {
-        $user = User::onlyTrashed()->where('id', $id)->get();
+        $user = Account::onlyTrashed()->where('id', $id)->get();
         if (count($user) !== 1) {
             return redirect('/users/deleted/')->with('error', trans('usersmanagement.errorUserNotFound'));
         }
@@ -42,7 +42,7 @@ class SoftDeletesController extends Controller
      */
     public function index()
     {
-        $users = User::onlyTrashed()->get();
+        $users = Account::onlyTrashed()->get();
         $roles = Role::all();
 
         return View('usersmanagement.show-deleted-users', compact('users', 'roles'));

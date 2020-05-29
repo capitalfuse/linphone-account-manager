@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Theme;
-use App\Models\User;
+use App\Models\Account;
 use Illuminate\Http\Request;
 use Validator;
 
@@ -26,7 +26,7 @@ class ThemesManagementController extends Controller
      */
     public function index()
     {
-        $users = User::all();
+        $users = Account::all();
 
         $themes = Theme::orderBy('name', 'asc')->get();
 
@@ -149,7 +149,7 @@ class ThemesManagementController extends Controller
      */
     protected function getThemeData(Theme $theme): array
     {
-        $users = User::all();
+        $users = Account::all();
         $themeUsers = [];
 
         foreach ($users as $user) {

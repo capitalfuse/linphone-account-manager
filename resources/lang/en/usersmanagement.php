@@ -27,6 +27,7 @@ return [
     'labelEmail'             => 'Email:',
     'labelFirstName'         => 'First Name:',
     'labelLastName'          => 'Last Name:',
+    'labelDomain'            => 'SIP Domain:',
     'labelRole'              => 'Role:',
     'labelStatus'            => 'Status:',
     'labelAccessLevel'       => 'Access',

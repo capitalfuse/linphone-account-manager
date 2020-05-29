@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('template_title')
-    {!!trans('usersmanagement.showing-user-deleted')!!} {{ $user->name }}
+    {!!trans('usersmanagement.showing-user-deleted')!!} {{ $user->username }}
 @endsection
 
 @php
@@ -35,11 +35,11 @@
                     <div class="card-body">
                         <div class="row">
                             <div class="col-sm-4 offset-sm-2 col-md-2 offset-md-3">
-                                <img src="@if ($user->profile && $user->profile->avatar_status == 1) {{ $user->profile->avatar }} @else {{ Gravatar::get($user->email) }} @endif" alt="{{ $user->name }}" class="rounded-circle center-block mb-3 mt-4 user-image">
+                                <img src="@if ($user->profile && $user->profile->avatar_status == 1) {{ $user->profile->avatar }} @else {{ Gravatar::get($user->email) }} @endif" alt="{{ $user->username }}" class="rounded-circle center-block mb-3 mt-4 user-image">
                             </div>
                             <div class="col-sm-4 col-md-6">
                                 <h4 class="text-muted margin-top-sm-1 text-center text-left-tablet">
-                                    {{ $user->name }}
+                                    {{ $user->username }}
                                 </h4>
                                 <p class="text-center text-left-tablet">
                                     <strong>
@@ -93,14 +93,14 @@
                             <div class="border-bottom"></div>
                         @endif
 
-                        @if ($user->name)
+                        @if ($user->username)
                             <div class="col-sm-5 col-xs-6 text-larger">
                                 <strong>
                                 {{ trans('usersmanagement.labelUserName') }}
                                 </strong>
                             </div>
                             <div class="col-sm-7">
-                                {{ $user->name }}
+                                {{ $user->username }}
                             </div>
 
                             <div class="clearfix"></div>

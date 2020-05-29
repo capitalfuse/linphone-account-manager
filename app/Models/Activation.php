@@ -35,7 +35,7 @@ class Activation extends Model
      * @var array
      */
     protected $hidden = [
-        'user_id',
+        'account_id',
         'token',
         'ip_address',
     ];
@@ -56,7 +56,7 @@ class Activation extends Model
      * @var array
      */
     protected $fillable = [
-        'user_id',
+        'account_id',
         'token',
         'ip_address',
     ];
@@ -68,7 +68,7 @@ class Activation extends Model
      */
     protected $casts = [
         'id'            => 'integer',
-        'user_id'       => 'integer',
+        'account_id'       => 'integer',
         'token'         => 'string',
         'ip_address'    => 'string',
     ];
@@ -76,8 +76,8 @@ class Activation extends Model
     /**
      * Get the user that owns the activation.
      */
-    public function user()
+    public function account()
     {
-        return $this->belongsTo('App\Models\User');
+        return $this->belongsTo('App\Models\Account');
     }
 }

@@ -23,6 +23,7 @@ return [
     'showProfileUsername'        => 'Username',
     'showProfileFirstName'       => 'First Name',
     'showProfileLastName'        => 'Last Name',
+    'showProfileDomain'          => 'SIP Domain',
     'showProfileEmail'           => 'E-mail Address',
     'showProfileLocation'        => 'Location',
     'showProfileBio'             => 'Bio',

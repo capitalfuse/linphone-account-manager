@@ -4,7 +4,8 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Models\Profile;
-use App\Models\User;
+use App\Models\Account;
+use App\Models\Password;
 use App\Traits\ActivationTrait;
 use App\Traits\CaptchaTrait;
 use App\Traits\CaptureIpTrait;
@@ -67,20 +68,22 @@ class RegisterController extends Controller
         return Validator::make(
             $data,
             [
-                'name'                  => 'required|max:255|unique:users',
+                'username'                  => 'required|max:255|unique:accounts',
                 'first_name'            => '',
                 'last_name'             => '',
-                'email'                 => 'required|email|max:255|unique:users',
+                'domain'                => 'required|max:64',
+                'email'                 => 'required|email|max:255|unique:accounts',
                 'password'              => 'required|min:6|max:30|confirmed',
                 'password_confirmation' => 'required|same:password',
                 'g-recaptcha-response'  => '',
                 'captcha'               => 'required|min:1',
             ],
             [
-                'name.unique'                   => trans('auth.userNameTaken'),
-                'name.required'                 => trans('auth.userNameRequired'),
+                'username.unique'                   => trans('auth.userNameTaken'),
+                'username.required'                 => trans('auth.userNameRequired'),
                 'first_name.required'           => trans('auth.fNameRequired'),
                 'last_name.required'            => trans('auth.lNameRequired'),
+                'domain.required'               => trans('auth.domainRequired'),
                 'email.required'                => trans('auth.emailRequired'),
                 'email.email'                   => trans('auth.emailInvalid'),
                 'password.required'             => trans('auth.passwordRequired'),
@@ -97,7 +100,7 @@ class RegisterController extends Controller
      *
      * @param array $data
      *
-     * @return User
+     * @return Account
      */
     protected function create(array $data)
     {
@@ -111,21 +114,28 @@ class RegisterController extends Controller
             $activated = true;
         }
 
-        $user = User::create([
-            'name'              => $data['name'],
+        $user = Account::create([
+            'username'          => $data['username'],
             'first_name'        => $data['first_name'],
             'last_name'         => $data['last_name'],
+            'domain'            => $data['domain'],
             'email'             => $data['email'],
-            'password'          => Hash::make($data['password']),
             'token'             => str_random(64),
             'signup_ip_address' => $ipAddress->getClientIp(),
             'activated'         => $activated,
+        ]);
+
+        $password = Password::create ([
+            'account_id'       => $user->id,
+            'password'         => hash('sha256', $user->username.':'.$user->domain.':'.$data['password']),
+            'algorithm'        => 'SHA-256',
         ]);
 
         $user->attachRole($role);
         $this->initiateEmailActivation($user);
 
         if (! config('settings.activation')) {
+            $user->password()->save($password);
             $profile = new Profile();
             $user->profile()->save($profile);
             $user->save();

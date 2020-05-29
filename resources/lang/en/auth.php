@@ -42,6 +42,7 @@ return [
     'name'            => 'Username',
     'first_name'      => 'First Name',
     'last_name'       => 'Last Name',
+    'domain'          => 'SIP Domain',
     'confirmPassword' => 'Confirm Password',
     'register'        => 'Register',
 
@@ -51,6 +52,7 @@ return [
     'ph_firstname'     => 'First Name',
     'ph_lastname'      => 'Last Name',
     'ph_password'      => 'Password',
+    'ph_domain'        => 'SIP Domain',
     'ph_password_conf' => 'Confirm Password',
 
     // User flash messages
@@ -68,6 +70,7 @@ return [
     'userNameRequired' => 'Username is required',
     'fNameRequired'    => 'First Name is required',
     'lNameRequired'    => 'Last Name is required',
+    'domainRequired'   => 'SIP Domain is required',
     'emailRequired'    => 'Email is required',
     'emailInvalid'     => 'Email is invalid',
     'passwordRequired' => 'Password is required',

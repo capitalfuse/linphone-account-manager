@@ -35,21 +35,21 @@
                                                         <div id="avatar_container">
                                                             <div class="collapseOne card-collapse collapse @if($user->profile->avatar_status == 0) show @endif">
                                                                 <div class="card-body">
-                                                                    <img src="{{  Gravatar::get($user->email) }}" alt="{{ $user->name }}" class="user-avatar">
+                                                                    <img src="{{  Gravatar::get($user->email) }}" alt="{{ $user->username }}" class="user-avatar">
                                                                 </div>
                                                             </div>
                                                             <div class="collapseTwo card-collapse collapse @if($user->profile->avatar_status == 1) show @endif">
                                                                 <div class="card-body">
                                                                     <div class="dz-preview"></div>
                                                                     {!! Form::open(array('route' => 'avatar.upload', 'method' => 'POST', 'name' => 'avatarDropzone','id' => 'avatarDropzone', 'class' => 'form single-dropzone dropzone single', 'files' => true)) !!}
-                                                                        <img id="user_selected_avatar" class="user-avatar" src="@if ($user->profile->avatar != NULL) {{ $user->profile->avatar }} @endif" alt="{{ $user->name }}">
+                                                                        <img id="user_selected_avatar" class="user-avatar" src="@if ($user->profile->avatar != NULL) {{ $user->profile->avatar }} @endif" alt="{{ $user->username }}">
                                                                     {!! Form::close() !!}
                                                                 </div>
                                                             </div>
                                                         </div>
                                                     </div>
                                                 </div>
-                                                {!! Form::model($user->profile, ['method' => 'PATCH', 'route' => ['profile.update', $user->name], 'id' => 'user_profile_form', 'class' => 'form-horizontal', 'role' => 'form', 'enctype' => 'multipart/form-data']) !!}
+                                                {!! Form::model($user->profile, ['method' => 'PATCH', 'route' => ['profile.update', $user->username], 'id' => 'user_profile_form', 'class' => 'form-horizontal', 'role' => 'form', 'enctype' => 'multipart/form-data']) !!}
                                                     {{ csrf_field() }}
                                                     <div class="row">
                                                         <div class="col-10 offset-1 col-sm-10 offset-sm-1 mb-1">
@@ -158,20 +158,39 @@
 
                                                     {!! csrf_field() !!}
 
-                                                    <div class="pt-4 pr-3 pl-2 form-group has-feedback row {{ $errors->has('name') ? ' has-error ' : '' }}">
-                                                        {!! Form::label('name', trans('forms.create_user_label_username'), array('class' => 'col-md-3 control-label')); !!}
+                                                    <div class="pt-4 pr-3 pl-2 form-group has-feedback row {{ $errors->has('username') ? ' has-error ' : '' }}">
+                                                        {!! Form::label('username', trans('forms.create_user_label_username'), array('class' => 'col-md-3 control-label')); !!}
                                                         <div class="col-md-9">
                                                             <div class="input-group">
-                                                                {!! Form::text('name', $user->name, array('id' => 'name', 'class' => 'form-control', 'placeholder' => trans('forms.create_user_ph_username'))) !!}
+                                                                {!! Form::text('username', $user->username, array('id' => 'username', 'class' => 'form-control', 'placeholder' => trans('forms.create_user_ph_username'))) !!}
                                                                 <div class="input-group-append">
-                                                                    <label class="input-group-text" for="name">
+                                                                    <label class="input-group-text" for="username">
                                                                         <i class="fa fa-fw {{ trans('forms.create_user_icon_username') }}" aria-hidden="true"></i>
                                                                     </label>
                                                                 </div>
                                                             </div>
-                                                            @if($errors->has('name'))
+                                                            @if($errors->has('username'))
                                                                 <span class="help-block">
-                                                                    <strong>{{ $errors->first('name') }}</strong>
+                                                                    <strong>{{ $errors->first('username') }}</strong>
+                                                                </span>
+                                                            @endif
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="pr-3 pl-2 form-group has-feedback row {{ $errors->has('domain') ? ' has-error ' : '' }}">
+                                                        {!! Form::label('domain', trans('forms.create_user_label_domain'), array('class' => 'col-md-3 control-label')); !!}
+                                                        <div class="col-md-9">
+                                                            <div class="input-group">
+                                                                {!! Form::text('domain', $user->domain, array('id' => 'domain', 'class' => 'form-control', 'placeholder' => trans('forms.create_user_ph_domain'))) !!}
+                                                                <div class="input-group-append">
+                                                                    <label for="domain" class="input-group-text">
+                                                                        <i class="fa fa-fw {{ trans('forms.create_user_icon_domain') }}" aria-hidden="true"></i>
+                                                                    </label>
+                                                                </div>
+                                                            </div>
+                                                            @if ($errors->has('domain'))
+                                                                <span class="help-block">
+                                                                    <strong>{{ $errors->first('domain') }}</strong>
                                                                 </span>
                                                             @endif
                                                         </div>
